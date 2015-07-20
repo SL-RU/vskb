@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <!-- Тег meta для указания кодировки -->
+  <meta charset="utf-8">
+  <script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="http://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
+  
+  <script type="text/javascript">
+$(document).ready(function() {
+  $('#example').dataTable( {
+    "ajax":  "./get_all"
+  } );
+} );
+  </script>
+</head>
+
+<body>
+
+  <table id="example" class="display" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>God</th>
+                <th>Genres</th>
+                <th>Descr</th>
+                <th>Rate</th>
+                <th>Comment</th>
+				<th>Tags</th>
+            </tr>
+        </thead>
+    </table>
+
+</body>
+
+</html>
