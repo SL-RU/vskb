@@ -1,6 +1,5 @@
 import cherrypy
 import os
-import simplejson
 import json
 from mako.template import Template
 
