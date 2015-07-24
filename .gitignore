@@ -90,3 +90,6 @@ tramp
 
 # cask packages
 .cask/
+
+# vskb
+vskb.json
