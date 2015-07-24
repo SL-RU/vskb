@@ -14,3 +14,7 @@ Very Simple Knowledge dataBase
 * Поддержка вложений
 * Мгновенное сохранение изменений
 * Синхронизация посредством любого облака или СКВ
+
+Необходимы:
+* [cherrypy](http://www.cherrypy.org/)
+* [mako](http://www.makotemplates.org/)
