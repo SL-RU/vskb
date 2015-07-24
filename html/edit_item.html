@@ -3,36 +3,43 @@
 
 <head>
   <meta charset="utf-8">
+  <script type="text/javascript" src="../js/jquery-1.11.3.min.js"></script>
   <script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
   
-        <script type="text/javascript">
-            function AjaxFormRequest(result_id,form_id,url) {
-                jQuery.ajax({
-                    url:     url, 
-                    type:     "POST",
-                    dataType: "html",
-                    data: jQuery("#"+form_id).serialize(), 
-                    
-             });
-        }
- 
-   </script>
+	<script type="text/javascript">
+	   $(document).ready(function()
+	  {
+		  $("#submit").click(function() {
+		  var data = $("#form_id").serializeArray();
+		  $.ajax({
+			  url: 'add_item',
+			  type: 'POST',
+			  contentType: 'application/json',
+			  data: JSON.stringify(data),
+			  dataType:'json'
+		  });
+		  });
+	  });
+	</script>
 
 </head>
 
 <body>
         <br/><br/>
-        <form method="post" action="" id="form_id">
-            Имя: <input type="text" name="n" value="" /><br/>
-            Год: <input type="number" name="y" value="1990" /><br/>
-            Жанры: <input type="text" name="g" value="комедия, " /><br/>
-			Описание: <input type="text" name="d" value="" /><br/>
-			Рэйтинг: <input type="number" name="r" value="5" /><br/>
-			Комментарий: <input type="text" name="c" value="" /><br/>
-			Тэги: <input type="text" name="t" value="фильм, " /><br/>
-            <input type="button" value="Отправить" onclick="AjaxFormRequest('result_div_id', 'form_id', 'add_item')" />
+        <form id="form_id">
+		  %for i in clms:
+		  %if clt[i] == "int":
+		  ${cln[i]} : <input type="number" name="${i}" text=""/><br/>
+		  %elif clt[i] == "rate":
+		  ${cln[i]} : <output name="amount${i}" for="${i}">5</output>
+		  <input type="range" min="0" max="10" name="${i}" value="5" oninput="amount${i}.value=${i}.value"/><br/>
+		  %else:
+		  ${cln[i]} : <input type="text" name="${i}" text=""/><br/>
+		  %endif
+		  %endfor
         </form>
+		<button id="submit">Submit</button>
 
 
 </body>

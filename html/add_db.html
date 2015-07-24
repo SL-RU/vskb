@@ -2,37 +2,136 @@
 <html>
 
 <head>
-  <!-- Тег meta для указания кодировки -->
   <meta charset="utf-8">
   <script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
   <script type="text/javascript" src="http://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
   
-  <script type="text/javascript">
-$(document).ready(function() {
-  $('#example').dataTable( {
-    "ajax":  "./get_all"
-  } );
-} );
+	<script type="text/javascript">	  
+	  $(document).ready(function() {
+		  
+		  var t = $('#table').DataTable( {
+			  paging: false,
+			  ordering: false,
+			  columnDefs: [
+				  {
+					  "targets":   0,
+					  "data": null,
+					  "defaultContent": '<input type="text" class="editor-0"></input>'
+				  },
+				  {
+					  "targets":   1,
+					  "data": null,
+					  "defaultContent": '<input type="text" class="editor-1"></input>'
+				  },
+				  {
+					  "targets":   2,
+					  "data": null,
+					  "defaultContent": '<select size="1" class="editor-2"><option value="text">	  Text field	  </option>	  	  <option value="str" selected="selected">	  String	  </option>	  	  <option value="tags">	  Tags	  </option>	  	  <option value="rate">	  Rating	  </option>	  	  <option value="int">	  Number	  </option>	  </select>'
+				  },
+				  {
+					  "targets":   3,
+					  "data": null,
+					  "defaultContent": '<input type="checkbox" checked="true" class="editor-active"></input>'
+				  }]
+		  } );
+		  $('#table').on( 'change', 'input.editor-active', function () {
+			  var data = t.row($(this).parents('tr')).data();
+			  if($(this).prop('checked'))
+			  {
+				  data[3] = 1;
+			  }
+			  else
+			  {
+				  data[3] = 0;
+			  }
+		  } );
+		  
+		  $('#table').on('input', 'input.editor-0', function(){
+			  var data = t.row($(this).parents('tr')).data();
+			  data[0] = $(this).val();
+		  });
+		  $('#table').on('input', 'input.editor-1', function(){
+			  var data = t.row($(this).parents('tr')).data();
+			  data[1] = $(this).val();
+		  });
+		  $('#table').on('change', 'select.editor-2', function(){
+			  var data = t.row($(this).parents('tr')).data();
+			  data[2] = $(this).val();
+		  });
+
+		  
+		  $('#add').on( 'click', function () {
+		 	  t.row.add( [
+		 		  '',
+		 		  '',
+		 		  'str',
+				  1,
+				  'Click'
+		 	  ] ).draw();
+		  });
+		  
+		  $('#submit').on( 'click', function () {
+		 	  var len = t.data().length;
+		 	  var dt = []
+		 	  for(var i = 0; i < len; i++){
+		 		  dt[i] = (t.row(i).data());
+		 		  
+			  }
+			  var data = {
+				  'columns': dt,
+				  'id': $('#dbid').val(),
+				  'name': $('#dbname').val(),
+				  'path': $('#dbpath').val()
+			  };
+		 	  $.ajax({
+		 		  url: 'add_new_db',
+		 		  type: 'POST',
+		 		  contentType: 'application/json',
+				  data: JSON.stringify(data),
+		 		  dataType:'json'
+		 	  });
+		  });
+		 
+		  $('#table tbody').on('click', 'td', function () {
+		 	  if($(this).find('input').length == 0 && $(this).find('select').length == 0)
+		 	  {
+		 		  $(this).parent('tr').toggleClass('selected');
+		 	  }
+		  });
+		  $('#delete').on('click', function () {
+		 	  t.rows('.selected').remove().draw( false );
+		  });
+		 
+		 
+		 
+	  } );
   </script>
 </head>
 
 <body>
+  Table ID: <input id="dbid"/><br/>
+  Table name <input id="dbname"/><br/>
+  Path: <input id="dbpath" type="text" value="~/vskb/"/><br/>
+  <br/>
+  <br/>
+  Database columns:
+  <table id="table" class="display" width="100%" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Column ID</th>
+        <th>Column name</th>
+		<th>Column type</th>
+        <th>Show on preview?</th>
+		<th>Select</th>
+      </tr>
+    </thead>
+  </table>
+  <button id="add">Add new column</button>
+  <button id="delete">Delete</button>
 
-  <table id="example" class="display" width="100%" cellspacing="0">
-        <thead>
-            <tr>
-                <th>Имя</th>
-                <th>God</th>
-                <th>Genres</th>
-                <th>Descr</th>
-                <th>Rate</th>
-                <th>Comment</th>
-				<th>Tags</th>
-            </tr>
-        </thead>
-    </table>
-
+  
+  <button id="submit">Submit</button>
 </body>
 
 </html>
