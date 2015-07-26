@@ -73,8 +73,8 @@ class Core(object):
             fl.close()
 
         self._add_db(db.DB(path))
+        self.saveConfig()    
         
 
     
 core = Core()
-core.saveConfig()        

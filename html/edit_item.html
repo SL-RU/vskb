@@ -4,44 +4,49 @@
 <head>
   <meta charset="utf-8">
   <script type="text/javascript" src="../js/jquery-1.11.3.min.js"></script>
-  <script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+
   
 	<script type="text/javascript">
-	   $(document).ready(function()
-	  {
-		  $("#submit").click(function() {
-		  var data = $("#form_id").serializeArray();
-		  $.ajax({
-			  url: 'add_item',
-			  type: 'POST',
-			  contentType: 'application/json',
-			  data: JSON.stringify(data),
-			  dataType:'json'
-		  });
-		  });
-	  });
+	$(document).ready(function()
+					  {
+						  $("#submit").click(function() {
+							  var data = $("#form_id").serializeArray();
+							  $.ajax({
+								  url: 'add_item',
+								  type: 'POST',
+								  contentType: 'application/json',
+								  data: JSON.stringify(data),
+								  dataType:'json'
+							  });
+						  });
+					  });
 	</script>
-
+	
 </head>
 
 <body>
-        <br/><br/>
-        <form id="form_id">
-		  %for i in clms:
-		  %if clt[i] == "int":
-		  ${cln[i]} : <input type="number" name="${i}" text=""/><br/>
-		  %elif clt[i] == "rate":
-		  ${cln[i]} : <output name="amount${i}" for="${i}">5</output>
-		  <input type="range" min="0" max="10" name="${i}" value="5" oninput="amount${i}.value=${i}.value"/><br/>
-		  %else:
-		  ${cln[i]} : <input type="text" name="${i}" text=""/><br/>
-		  %endif
-		  %endfor
-        </form>
-		<button id="submit">Submit</button>
-
-
+  <br/><br/>
+  <form id="form_id" class="pure-form-aligned">
+	<fieldset>
+	  %for i in clms:
+	  <div class="pure-control-group">
+		<label for="${i}">${cln[i]}</label> 
+		%if clt[i] == "int":
+		<input type="number" name="${i}" id="${i}" text="" placeholder="...."/><br/>
+		%elif clt[i] == "rate":
+		<output name="amount${i}" for="${i}">5</output>
+		<input type="range" min="0" max="10" name="${i}" value="5" oninput="amount${i}.value=${i}.value"/><br/>
+		%else:
+		<input type="text" name="${i}" text=""/><br/>
+		%endif
+	  </div>
+	  %endfor
+	</fieldset>
+  </form>
+  
+  <button id="submit" class="pure-button pure-button-primary">Submit</button>
+  
+  
 </body>
-
 </html>

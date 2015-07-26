@@ -12,36 +12,50 @@
   
   
 	<script type="text/javascript">
-      $(document).ready(function()
-	  {
-	  $.getJSON('get_db_info', {}, function(json){
-	  $('#DBName').html(json.name);
-	  });
-
-	  $('#table').dataTable( {
-      "ajax":  "./get_all"
-	  } );
-
-	  $( "#dialog" ).dialog(
-	  {
-	  autoOpen: false,
-	  width: $(document).width() - 20,
-	  height: $(document).height() - 20,
-	  fullScreen: true,
-	  fullScreenForce: true
-	  });
-
-	  $("#new_item").click(function(){
-	  openPopup("edit");
-	  });
-
-	  
-	  } );	  
+	$(document).ready(function()
+					  {
+						  $.getJSON('get_db_info', {}, function(json){
+							  $('#DBName').html(json.name);
+						  });
+						  
+						  t = $('#table').DataTable( {
+							  ajax:  "./get_all",
+							  columnDefs: [
+								  {
+									  "targets":   ${len(clmns) + 1},
+									  "data": null,
+									  "defaultContent": '<button class="view-b">View</button>'
+								  }
+							  ]
+						  } );
+						  
+						  
+						  
+						  $( "#dialog" ).dialog(
+							  {
+								  autoOpen: false,
+								  width: $(document).width() - 20,
+								  height: $(document).height() - 20,
+								  fullScreen: true,
+								  fullScreenForce: true
+							  });
+						  
+						  $("#new_item").click(function(){
+							  openPopup("edit");
+						  });
+						  $('#table').on('click', '.view-b', function () {
+							  var data = t.row($(this).parents('tr')).data();
+							  openPopup("view?id=" + data[0]);
+						  }
+										);
+						  
+						  
+					  });	  
 	</script>
 	<script>
 	  function openPopup(site) {
-	  $( "#dialog" ).dialog("open");
-	  $("#dialog iframe").attr("src", site);
+		  $( "#dialog" ).dialog("open");
+		  $("#dialog iframe").attr("src", site);
 	  }
 	</script>  
 </head>
@@ -56,6 +70,7 @@
 		%for i in clmns:
 		<th>${i}</th>
 		%endfor
+		<th>View</th>
       </tr>
 	</thead>
   </table>

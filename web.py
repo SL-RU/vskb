@@ -10,7 +10,7 @@ class DBInterface(object):
     db = None
     
     def index(self):
-        return "<a href='./all'>" + self.db.DBName + "</a>"
+        return "<a href='./all'>" + self.db.DBName + "</a><br/>"
 
     @cherrypy.tools.json_out()
     def get_all(self, _=0):
@@ -39,6 +39,10 @@ class DBInterface(object):
                 "columns" : db.columns,
                 "columnNames":db.columnNames}
 
+    @cherrypy.tools.json_out()
+    def get_item_data(self, id):
+        return {"d" : self.db.get_by_id(id)}
+
     def all(self):
         db = self.db
         sc = list()
@@ -48,6 +52,9 @@ class DBInterface(object):
 
     def edit(self):
         return Template(filename="/home/sl_ru/b/vskb/html/edit_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType)
+
+    def view(self, id):
+        return Template(filename="/home/sl_ru/b/vskb/html/view_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, id=id)
 
     @cherrypy.tools.json_in()
     def add_item(self):
@@ -62,11 +69,13 @@ class DBInterface(object):
         
     all.exposed = True
     edit.exposed = True
+    view.exposed = True
     add_item.exposed = True
     get_db_info.exposed = True
     add_item.exposed = True
     index.exposed = True
     get_all.exposed = True
+    get_item_data.exposed = True
 
 
         
