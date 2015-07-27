@@ -12,7 +12,7 @@
 	{
 		$.getJSON('get_item_data?id='+id, {}, function(json){
 		%for i in range(len(clms)):
-			$('#${clms[i]}').html(json.d[${i}]);
+			$('#${clms[i]}').html(json.d[${i + 1}]);
 		%endfor
 		});
 	}

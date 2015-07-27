@@ -50,8 +50,11 @@ class DBInterface(object):
             sc.append(db.columnNames[i])
         return Template(filename="/home/sl_ru/b/vskb/html/db.html").render(clmns=sc)
 
-    def edit(self):
-        return Template(filename="/home/sl_ru/b/vskb/html/edit_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType)
+    def edit(self, id):
+        return Template(filename="/home/sl_ru/b/vskb/html/edit_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, new_item=0, id=id)
+
+    def add(self):
+        return Template(filename="/home/sl_ru/b/vskb/html/edit_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, new_item=1)
 
     def view(self, id):
         return Template(filename="/home/sl_ru/b/vskb/html/view_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, id=id)
@@ -65,14 +68,29 @@ class DBInterface(object):
         print(z)
         self.db.add(z)
 
+    @cherrypy.tools.json_in()
+    def edit_item(self):
+        i = cherrypy.request.json
+        id = ""
+        z = list()
+        for j in i:
+            print(j)
+            if j["name"] == 'id':
+                id = j["value"]
+                print("ID " + id)
+            else:
+                z.append((j["name"], j['value']))
+        self.db.update(id, z)
         
         
     all.exposed = True
     edit.exposed = True
+    add.exposed = True
     view.exposed = True
     add_item.exposed = True
     get_db_info.exposed = True
     add_item.exposed = True
+    edit_item.exposed = True
     index.exposed = True
     get_all.exposed = True
     get_item_data.exposed = True

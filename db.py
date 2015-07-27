@@ -60,6 +60,22 @@ class DB(object):
     def search(self, pattern):
         pass
 
+    def update(self, id, data):
+        vls = ""
+        print(data)
+        for n,v in data:
+            if n in self.columns:
+                vls += n + "="
+                tp = GetSQLTypeFromColumnType(self.columnType[n])
+                if tp is "TEXT":
+                    vls += "'" + v + "',"
+                else:
+                    vls += v + ","
+        print("UPDATE " + self.DBID + " SET " + vls[:-1] + " WHERE ID=" + id)
+        self.db.execute("UPDATE " + self.DBID + " SET " + vls[:-1] + " WHERE ID=" + id)
+        self.db.commit()
+
+        
     def add(self, args):
         cols = "ID, "
         vals = str(self.count()) + ", "

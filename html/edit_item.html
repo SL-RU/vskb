@@ -7,9 +7,33 @@
   <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 
   
-	<script type="text/javascript">
+  <script type="text/javascript">
+	function get_info(id)
+	{
+		$.getJSON('get_item_data?id='+id, {}, function(json){
+			 	%for i in range(len(clms)):
+			$('#${clms[i]}').val(json.d[${i + 1}]);
+				%if clt[clms[i]] == "rate":
+			$('#amount${clms[i]}').val(json.d[${i + 1}]);
+			 	%endif
+				%endfor
+		});
+	}
 	$(document).ready(function()
 					  {
+							  %if new_item is 0:
+						  get_info(${id});
+						  $("#submit").click(function() {
+							  var data = $("#form_id").serializeArray();
+							  $.ajax({
+								  url: 'edit_item',
+								  type: 'POST',
+								  contentType: 'application/json',
+								  data: JSON.stringify(data),
+								  dataType:'json'
+							  });
+						  });
+							  %else:
 						  $("#submit").click(function() {
 							  var data = $("#form_id").serializeArray();
 							  $.ajax({
@@ -20,6 +44,7 @@
 								  dataType:'json'
 							  });
 						  });
+							  %endif
 					  });
 	</script>
 	
@@ -27,25 +52,41 @@
 
 <body>
   <br/><br/>
+  %if new_item is 0:
+  
+  %else:
+  New item:
+  %endif
+
   <form id="form_id" class="pure-form-aligned">
 	<fieldset>
+	  %if new_item is 0:
+  	  <div class="pure-control-group">
+		<label for="id">ID</label> 
+		<input type="text" name="id" id="id" value="${id}" readonly/><br/>
+	  </div>
+	  %endif
 	  %for i in clms:
 	  <div class="pure-control-group">
 		<label for="${i}">${cln[i]}</label> 
 		%if clt[i] == "int":
-		<input type="number" name="${i}" id="${i}" text="" placeholder="...."/><br/>
+		<input type="number" name="${i}" id="${i}" text=""/><br/>
 		%elif clt[i] == "rate":
-		<output name="amount${i}" for="${i}">5</output>
-		<input type="range" min="0" max="10" name="${i}" value="5" oninput="amount${i}.value=${i}.value"/><br/>
+		<output name="amount${i}" id="amount${i}" for="${i}">5</output>
+		<input type="range" min="0" max="10" name="${i}" id="${i}" value="5" oninput="amount${i}.value=${i}.value"/><br/>
 		%else:
-		<input type="text" name="${i}" text=""/><br/>
+		<input type="text" name="${i}" id="${i}" text=""/><br/>
 		%endif
 	  </div>
 	  %endfor
 	</fieldset>
   </form>
   
+  %if new_item is 0:
+  <button id="submit" class="pure-button pure-button-primary">Edit</button>
+  %else:
   <button id="submit" class="pure-button pure-button-primary">Submit</button>
+  %endif
   
   
 </body>

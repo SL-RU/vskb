@@ -20,11 +20,12 @@
 						  
 						  t = $('#table').DataTable( {
 							  ajax:  "./get_all",
+							  stateSave: true,
 							  columnDefs: [
 								  {
 									  "targets":   ${len(clmns) + 1},
 									  "data": null,
-									  "defaultContent": '<button class="view-b">View</button>'
+									  "defaultContent": '<button class="view-b">View</button><button class="edit-b">Edit</button>'
 								  }
 							  ]
 						  } );
@@ -41,13 +42,27 @@
 							  });
 						  
 						  $("#new_item").click(function(){
-							  openPopup("edit");
+							  openPopup("add");
 						  });
 						  $('#table').on('click', '.view-b', function () {
 							  var data = t.row($(this).parents('tr')).data();
 							  openPopup("view?id=" + data[0]);
 						  }
 										);
+						  $('#table').on('click', '.edit-b', function () {
+							  var data = t.row($(this).parents('tr')).data();
+							  openPopup("edit?id=" + data[0]);
+						  }
+										);
+						  
+
+						  $("#update").click(function(){
+							  //var pg = t.page.info()["page"]
+							  //alert(pg)
+							  t.ajax.reload(function(){
+								  //t.page(pg)
+							  }, false);
+						  });
 						  
 						  
 					  });	  
@@ -62,7 +77,8 @@
 
 <body>
   <div id="DBName">Headddd</div>
-  <button id="new_item">New</button>
+  <button id="new_item">New</button><br/>
+  <button id="update">Update</button>
   <table id="table" class="display" width="100%" cellspacing="0">
 	<thead>
       <tr>
