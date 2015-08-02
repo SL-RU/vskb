@@ -5,7 +5,7 @@ import os
 def GetSQLTypeFromColumnType(type):
     if type in ["text", "str", "tags"]:
         return "TEXT"
-    elif type in ["rate", "int"]:
+    elif type in ["rate", "int", "check"]:
         return "INTEGER"
     else:
         return "TEXT"
@@ -37,6 +37,7 @@ class DB(object):
     columnNames = dict()
     #searchColumns = list()
     columnType = dict()
+    columnTypeArg = dict()
     previewColumns = list()
 
     def all(self):
@@ -68,15 +69,17 @@ class DB(object):
                 vls += n + "="
                 tp = GetSQLTypeFromColumnType(self.columnType[n])
                 if tp is "TEXT":
-                    vls += "'" + v + "',"
+                    vls += "'" + str(v) + "',"
                 else:
-                    vls += v + ","
+                    vls += str(v) + ","
         print("UPDATE " + self.DBID + " SET " + vls[:-1] + " WHERE ID=" + id)
         self.db.execute("UPDATE " + self.DBID + " SET " + vls[:-1] + " WHERE ID=" + id)
         self.db.commit()
 
         
     def add(self, args):
+        if(len(args) != len(self.columns)):
+            print("Wrong data! Arg count wrong! Data:", args)
         cols = "ID, "
         vals = str(self.count()) + ", "
         for i in range(len(args)):
@@ -104,6 +107,7 @@ class DB(object):
             #self.searchColumns = dt["searchColumns"]
             self.columnType = dt["columnType"]
             self.DBName = dt["name"]
+            self.columnTypeArg = dt["columnTypeArg"]
             self.previewColumns = dt["previewColumns"]
         pass
 #    def TestConf(self):

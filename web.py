@@ -20,13 +20,6 @@ class DBInterface(object):
         #print (s)
         return s
 
-    @cherrypy.tools.json_in()
-    def add_item(self):
-        i = cherrypy.request.json
-        print(i)
-        #self.db.add(n, y, g, d, r, c, t)
-        return ""
-
     @cherrypy.tools.json_out()
     def get_db_info(self):
         db = self.db
@@ -51,22 +44,26 @@ class DBInterface(object):
         return Template(filename="/home/sl_ru/b/vskb/html/db.html").render(clmns=sc)
 
     def edit(self, id):
-        return Template(filename="/home/sl_ru/b/vskb/html/edit_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, new_item=0, id=id)
+        return Template(filename="/home/sl_ru/b/vskb/html/edit_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, ctarg=self.db.columnTypeArg, new_item=0, id=id)
 
     def add(self):
-        return Template(filename="/home/sl_ru/b/vskb/html/edit_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, new_item=1)
+        return Template(filename="/home/sl_ru/b/vskb/html/edit_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, ctarg=self.db.columnTypeArg, new_item=1)
 
     def view(self, id):
-        return Template(filename="/home/sl_ru/b/vskb/html/view_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, id=id)
+        return Template(filename="/home/sl_ru/b/vskb/html/view_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, ctarg=self.db.columnTypeArg, id=id)
 
     @cherrypy.tools.json_in()
     def add_item(self):
+        """IN: list like that: [{value: 45, name: id}, {value: dsfdsfads, name: text}], where columns goes in oder"""
         i = cherrypy.request.json
+        print(i)
         z = list()
         for j in i:
-            z.append(j['value'])
+            if j["name"] != 'id' and j["name"] in self.db.columns:
+                z.insert(self.db.columns.index(j["name"]), j['value'])
         print(z)
         self.db.add(z)
+        return "1"
 
     @cherrypy.tools.json_in()
     def edit_item(self):
@@ -81,6 +78,7 @@ class DBInterface(object):
             else:
                 z.append((j["name"], j['value']))
         self.db.update(id, z)
+        return "1"        
         
         
     all.exposed = True

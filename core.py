@@ -53,11 +53,13 @@ class Core(object):
         cln = dict()
         clt = dict()
         clp = list()
+        clarg = dict()
         for i in data["columns"]:
             cls.append(i[0])
             cln[i[0]] = i[1]
             clt[i[0]] = i[2]
-            if i[3] == 1:
+            clarg[i[0]] = i[3]
+            if i[4] == 1:
                 clp.append(i[0])
         path =  os.path.join(data["path"], data["id"] + ".conf")
         dt = {
@@ -66,7 +68,8 @@ class Core(object):
             "columns": cls,
             "columnNames": cln,
             "columnType" : clt,
-            "previewColumns": clp
+            "previewColumns": clp,
+            "columnTypeArg" : clarg
         }
         with open(path, "w") as fl:
             json.dump(dt, fl)

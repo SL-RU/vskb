@@ -6,47 +6,68 @@
   <script type="text/javascript" src="../js/jquery-1.11.3.min.js"></script>
   <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 
+
   
   <script type="text/javascript">
-	function get_info(id)
-	{
-		$.getJSON('get_item_data?id='+id, {}, function(json){
-			 	%for i in range(len(clms)):
-			$('#${clms[i]}').val(json.d[${i + 1}]);
-				%if clt[clms[i]] == "rate":
-			$('#amount${clms[i]}').val(json.d[${i + 1}]);
-			 	%endif
-				%endfor
-		});
-	}
-	$(document).ready(function()
-					  {
-							  %if new_item is 0:
-						  get_info(${id});
-						  $("#submit").click(function() {
-							  var data = $("#form_id").serializeArray();
-							  $.ajax({
-								  url: 'edit_item',
-								  type: 'POST',
-								  contentType: 'application/json',
-								  data: JSON.stringify(data),
-								  dataType:'json'
-							  });
-						  });
-							  %else:
-						  $("#submit").click(function() {
-							  var data = $("#form_id").serializeArray();
-							  $.ajax({
-								  url: 'add_item',
-								  type: 'POST',
-								  contentType: 'application/json',
-								  data: JSON.stringify(data),
-								  dataType:'json'
-							  });
-						  });
-							  %endif
-					  });
-	</script>
+    function get_info(id)
+    {
+	$.getJSON('get_item_data?id='+id, {}, function(json){
+		%for i in range(len(clms)):
+		%if clt[clms[i]] == "check":
+	    $('#${clms[i]}').prop("checked", json.d[${i + 1}] == 1);
+		%else:
+	    $('#${clms[i]}').val(json.d[${i + 1}]);
+		%endif
+
+	    
+		%if clt[clms[i]] == "rate":
+	    $('#amount${clms[i]}').val(json.d[${i + 1}]);
+		%endif
+		%endfor
+	});
+    }
+    function get_data()
+    {
+	    %for i in range(len(clms)):
+	    %if clt[clms[i]] == "check":
+	gd_${clms[i]} = $("#${clms[i]}").prop("checked")?1:0;
+	    %else:			  
+	gd_${clms[i]} =  $("#${clms[i]}").val();
+	    %endif
+	    %endfor
+	
+	return [
+	    {"name" : "id", "value": "${id}"},
+		%for i in range(len(clms)):  
+	    {"name" : "${clms[i]}", "value": gd_${clms[i]}},
+		%endfor
+	]
+    }
+    
+    $(document).ready(function()
+		      {
+			      %if new_item is 0:
+			  get_info(${id});
+			  var site = "edit_item"
+			      %else:
+			  var site = "add_item"
+			      %endif
+			  
+			  $("#submit").click(function() {
+			      var data = get_data();
+			      $.ajax({
+				  url: site,
+				  type: 'POST',
+				  contentType: 'application/json',
+				  data: JSON.stringify(data),
+				  dataType:'json',
+				  success: function(){
+				      window.parent.$('#update').click();
+				  }
+			      });
+			  });
+		      }); 
+  </script>
 	
 </head>
 
@@ -57,7 +78,6 @@
   %else:
   New item:
   %endif
-
   <form id="form_id" class="pure-form-aligned">
 	<fieldset>
 	  %if new_item is 0:
@@ -70,11 +90,22 @@
 	  <div class="pure-control-group">
 		<label for="${i}">${cln[i]}</label> 
 		%if clt[i] == "int":
+		 <!--Here is an number input field-->
 		<input type="number" name="${i}" id="${i}" text=""/><br/>
 		%elif clt[i] == "rate":
+		<!--Here is an rating input field-->
 		<output name="amount${i}" id="amount${i}" for="${i}">5</output>
 		<input type="range" min="0" max="10" name="${i}" id="${i}" value="5" oninput="amount${i}.value=${i}.value"/><br/>
+		%elif clt[i] == "text":
+		<!--Here is an markdown input field-->
+		<textarea name="${i}" id="${i}"></textarea><br/>
+		%elif clt[i] == "tags":
+		<!--Here is an tags input field-->
+		<input type="text" name="${i}" id="${i}" text=""/><br/>
+		%elif clt[i] == "check":
+		<input type="checkbox" name="${i}" id="${i}" checked="true"></input>
 		%else:
+		<!--Here is an string input field-->
 		<input type="text" name="${i}" id="${i}" text=""/><br/>
 		%endif
 	  </div>
