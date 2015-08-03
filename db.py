@@ -3,7 +3,7 @@ import json
 import os
 
 def GetSQLTypeFromColumnType(type):
-    if type in ["text", "str", "tags"]:
+    if type in ["text", "str", "tags", "select"]:
         return "TEXT"
     elif type in ["rate", "int", "check"]:
         return "INTEGER"
@@ -21,7 +21,7 @@ class DB(object):
         self.DBPath = dbpath
         self.load_config()
         if not os.path.exists(dbpath):
-            self.db = lite.connect(dbpath, check_same_thread=False) 
+            self.db = lite.connect(dbpath, check_same_thread=False)
             self.createDB()
         else:         
             self.db = lite.connect(dbpath, check_same_thread=False)
@@ -36,10 +36,15 @@ class DB(object):
     columns = list()
     columnNames = dict()
     #searchColumns = list()
+    #Тип столбца.
     columnType = dict()
+    #Аргументы к типу колонки(например список опций у комбобокса и тд)
     columnTypeArg = dict()
+    #Кэш столбцов. Используется некоторыми типами столбцов, например тэгами для словаря тэгов. Сохраняется и загружается.
+    columnsCache = dict()
+    #Колонки, которые будут отображатся на странице базы данных
     previewColumns = list()
-
+    
     def all(self):
         rt = list()
         for row in self.db.execute('SELECT * FROM ' + self.DBID):
@@ -72,6 +77,7 @@ class DB(object):
                     vls += "'" + str(v) + "',"
                 else:
                     vls += str(v) + ","
+                self.process_val(v, n)
         print("UPDATE " + self.DBID + " SET " + vls[:-1] + " WHERE ID=" + id)
         self.db.execute("UPDATE " + self.DBID + " SET " + vls[:-1] + " WHERE ID=" + id)
         self.db.commit()
@@ -90,11 +96,30 @@ class DB(object):
                 vals += "'" + str(args[i])  + "', "
             else:
                 vals += str(args[i]) + ", "
+            #Process vals for smth...
+            self.process_val(args[i], cl)
         comm = "INSERT INTO " + self.DBID + "(" + cols[:-2] + ") VALUES (" + vals[:-2] + ");"
         print(comm)
         self.db.execute(comm)
         self.db.commit()    
 
+
+    def process_val(self, val, name):
+        tp = self.columnType[name]    
+        if tp == "tags":
+            tgs = val.split(",")
+            for i in tgs:
+                i = i.rstrip().lstrip()
+                if name in self.columnsCache:
+                    if i not in self.columnsCache[name]:
+                        self.columnsCache[name].append(i)
+                        print("Tag " + i + " added in column " + name + "'s cache'")
+                else:
+                    self.columnsCache[name] = [i,]
+                    print("Tag " + i + " added in column " + name + "'s cache'")
+        
+        
+        
     def count(self):
         return self.db.execute("SELECT COUNT(*) FROM " + self.DBID).fetchone()[0]
         
@@ -109,16 +134,21 @@ class DB(object):
             self.DBName = dt["name"]
             self.columnTypeArg = dt["columnTypeArg"]
             self.previewColumns = dt["previewColumns"]
+            if "cache" in dt:
+                self.columnsCache = dt["cache"]
+            fl.close()
         pass
-#    def TestConf(self):
-#        self.DBID = "test"
-#        self.DBName = "Тестовая"
-#        self.columns = ["name", "year", "genres", "descr", "rate", "comment", "tags"]
-#        self.columnNames = ["Имя", "Год", "Жанры", "Описание", "Оценка", "Комментарий", "Тэги"]
-#        #self.searchColumns = ["name", "year", "genres", "tags", "comment"]
-#        self.columnType = ["str", "int", "tags", "text", "rate", "text", "tags"]
-#        self.previewColumns = ["name", "year", "genres", "tags"]
-    
+            
+    def save(self):
+        dt = {}
+        with open(self.ConfigPath, "r") as fl:
+            dt  = json.load(fl)
+            fl.close()         
+        dt["cache"] = self.columnsCache
+        with open(self.ConfigPath, "w") as fl:
+            json.dump(dt, fl)
+            fl.close()
+        
     def createDB(self):
         types = ""
         for i in self.columns:
@@ -131,3 +161,35 @@ class DB(object):
                         types[:-2] + ");")
         self.db.commit()
         print("DB created")
+
+ #####   #######  #        #     #  #     #  #     #    
+#     #  #     #  #        #     #  ##   ##  ##    #    
+#        #     #  #        #     #  # # # #  # #   #    
+#        #     #  #        #     #  #  #  #  #  #  #    
+#        #     #  #        #     #  #     #  #   # #    
+#     #  #     #  #        #     #  #     #  #    ##    
+ #####   #######  #######   #####   #     #  #     #    
+
+#######  #     #  ######   #######  
+   #      #   #   #     #  #        
+   #       # #    #     #  #        
+   #        #     ######   #####    
+   #        #     #        #        
+   #        #     #        #        
+   #        #     #        #######  
+        
+#######  #     #  #     #   #####   #######  ###  #######  #     #   #####   
+#        #     #  ##    #  #     #     #      #   #     #  ##    #  #     #  
+#        #     #  # #   #  #           #      #   #     #  # #   #  #        
+#####    #     #  #  #  #  #           #      #   #     #  #  #  #   #####   
+#        #     #  #   # #  #           #      #   #     #  #   # #        #  
+#        #     #  #    ##  #     #     #      #   #     #  #    ##  #     #  
+#         #####   #     #   #####      #     ###  #######  #     #   #####   
+
+    def get_all_tags(self, name):
+        if name in self.columnsCache:
+            return self.columnsCache[name]
+        else:
+            return []
+
+    

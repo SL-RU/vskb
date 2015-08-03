@@ -39,6 +39,7 @@ class Core(object):
             dt["defaultpath"] = self.defaultDBpath
             dt["dbs"] = list()
             for i in self.dbs:
+                i.save()
                 dt["dbs"].append(i.ConfigPath)
             json.dump(dt, fl)
             fl.close()
@@ -76,7 +77,7 @@ class Core(object):
             fl.close()
 
         self._add_db(db.DB(path))
-        self.saveConfig()    
+        self.saveConfig()
         
 
     

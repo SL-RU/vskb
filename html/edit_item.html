@@ -5,6 +5,10 @@
   <meta charset="utf-8">
   <script type="text/javascript" src="../js/jquery-1.11.3.min.js"></script>
   <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+  <link rel="stylesheet" href="../css/jquery.tag-editor.css">
+  <script type="text/javascript" src="../js/jquery.caret.min.js"></script>
+  <script type="text/javascript" src="../js/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="../js/jquery.tag-editor.min.js"></script>
 
 
   
@@ -15,6 +19,16 @@
 		%for i in range(len(clms)):
 		%if clt[clms[i]] == "check":
 	    $('#${clms[i]}').prop("checked", json.d[${i + 1}] == 1);
+		%elif clt[clms[i]] == "tags":
+	    $.getJSON('get_tags?column=${clms[i]}', {}, function(j){
+		console.log(j);
+		$("#${clms[i]}").tagEditor({
+		    autocomplete: {
+			delay: 0,
+			position: {collision: 'flip'},
+			source: j},
+		    initialTags: json.d[${i + 1}].split(',')});
+	    });
 		%else:
 	    $('#${clms[i]}').val(json.d[${i + 1}]);
 		%endif
@@ -31,6 +45,8 @@
 	    %for i in range(len(clms)):
 	    %if clt[clms[i]] == "check":
 	gd_${clms[i]} = $("#${clms[i]}").prop("checked")?1:0;
+	    %elif clt[clms[i]] == "tags":
+	gd_${clms[i]} = $("#${clms[i]}").tagEditor('getTags')[0].tags.toString();
 	    %else:			  
 	gd_${clms[i]} =  $("#${clms[i]}").val();
 	    %endif
@@ -46,6 +62,21 @@
     
     $(document).ready(function()
 		      {
+			  //init elements
+			      %for i in range(len(clms)):
+			      %if clt[clms[i]] == "tags" and new_item is not 0:
+			  $.getJSON('get_tags?column=${clms[i]}', {}, function(json){
+			      console.log(json);
+			      $("#${clms[i]}").tagEditor({
+				  autocomplete: {
+				      delay: 0,
+				      position: {collision: 'flip'},
+				      source: json}});
+			  });
+			      %endif
+			      %endfor
+
+
 			      %if new_item is 0:
 			  get_info(${id});
 			  var site = "edit_item"
@@ -104,6 +135,12 @@
 		<input type="text" name="${i}" id="${i}" text=""/><br/>
 		%elif clt[i] == "check":
 		<input type="checkbox" name="${i}" id="${i}" checked="true"></input>
+		%elif clt[i] == "select":
+		<select name="${i}" id="${i}">
+		  %for j in ctarg[i].split(';'):
+		  <option>${j}</option>
+		  %endfor
+		</select>
 		%else:
 		<!--Here is an string input field-->
 		<input type="text" name="${i}" id="${i}" text=""/><br/>

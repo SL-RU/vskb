@@ -63,6 +63,8 @@ class DBInterface(object):
                 z.insert(self.db.columns.index(j["name"]), j['value'])
         print(z)
         self.db.add(z)
+        #save cache        
+        self.db.save()
         return "1"
 
     @cherrypy.tools.json_in()
@@ -78,15 +80,28 @@ class DBInterface(object):
             else:
                 z.append((j["name"], j['value']))
         self.db.update(id, z)
-        return "1"        
+        #save cache        
+        self.db.save()
+        return "1"
+
         
-        
+    @cherrypy.tools.json_out()
+    def get_tags(self, column):
+        return self.db.get_all_tags(column)
+
+    @cherrypy.tools.json_out()
+    def get_options(self, column):
+        return self.db.get_all_tags(column)
+
+    
     all.exposed = True
     edit.exposed = True
     add.exposed = True
     view.exposed = True
     add_item.exposed = True
     get_db_info.exposed = True
+    get_tags.exposed = True
+    get_options.exposed = True
     add_item.exposed = True
     edit_item.exposed = True
     index.exposed = True
