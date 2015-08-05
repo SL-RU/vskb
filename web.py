@@ -10,7 +10,7 @@ class DBInterface(object):
     db = None
     
     def index(self):
-        return "<a href='./all'>" + self.db.DBName + "</a><br/>"
+        return "<a href='./all'>View db</a><br/>"
 
     @cherrypy.tools.json_out()
     def get_all(self, _=0):
@@ -41,16 +41,16 @@ class DBInterface(object):
         sc = list()
         for i in self.db.previewColumns:
             sc.append(db.columnNames[i])
-        return Template(filename="/home/sl_ru/b/vskb/html/db.html").render(clmns=sc)
+        return Template(filename=os.path.join(os.getcwd(), "html/db.html")).render(clmns=sc)
 
     def edit(self, id):
-        return Template(filename="/home/sl_ru/b/vskb/html/edit_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, ctarg=self.db.columnTypeArg, new_item=0, id=id)
+        return Template(filename=os.path.join(os.getcwd(), "html/edit_item.html")).render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, ctarg=self.db.columnTypeArg, new_item=0, id=id)
 
     def add(self):
-        return Template(filename="/home/sl_ru/b/vskb/html/edit_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, ctarg=self.db.columnTypeArg, new_item=1)
+        return Template(filename=os.path.join(os.getcwd(), "html/edit_item.html")).render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, ctarg=self.db.columnTypeArg, new_item=1)
 
     def view(self, id):
-        return Template(filename="/home/sl_ru/b/vskb/html/view_item.html").render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, ctarg=self.db.columnTypeArg, id=id)
+        return Template(filename=os.path.join(os.getcwd(), "html/view_item.html")).render(clms= self.db.columns, cln=self.db.columnNames, clt=self.db.columnType, ctarg=self.db.columnTypeArg, id=id)
 
     @cherrypy.tools.json_in()
     def add_item(self):
@@ -118,9 +118,9 @@ class MainPage(object):
     core = None
     
     def index(self):
-        s = ""
+        s = "<a href='add'>Add new</a><br/><br/><br/>"
         for i in self.core.dbs:
-            s += "<a href='" + i.DBID  + "'>" + i.DBName + "</a><br>"
+            s += "<a href='" + i.DBID  + "'>" + i.DBName + "</a><br/>"
         return s
 
     @cherrypy.tools.json_in()

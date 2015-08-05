@@ -62,7 +62,7 @@ class Core(object):
             clarg[i[0]] = i[3]
             if i[4] == 1:
                 clp.append(i[0])
-        path =  os.path.join(data["path"], data["id"] + ".conf")
+        path =  os.path.join(self.defaultDBpath, data["id"] + ".conf")
         dt = {
             "dbid" : data["id"],
             "name" : data["name"],

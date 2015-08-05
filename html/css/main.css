@@ -1,0 +1,11 @@
+.spoiler-button {
+    display: inline-block;
+    border: none;
+    border-radius: 4px;
+    font-size: 22px;
+    padding: 10px 20px;
+    background: #558ed6;
+    color: #fff;
+    font-family: Tahoma, sans-serif;
+    cursor: pointer;
+}

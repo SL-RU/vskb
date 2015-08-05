@@ -6,6 +6,7 @@
   <script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
   <script type="text/javascript" src="http://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
   <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
+  <link rel="stylesheet" type="text/css" href="./css/main.css">
   
   <script type="text/javascript">	  
     $(document).ready(function() {
@@ -91,8 +92,7 @@
 	    var data = {
 		'columns': dt,
 		'id': $('#dbid').val(),
-		'name': $('#dbname').val(),
-		'path': $('#dbpath').val()
+		'name': $('#dbname').val()
 	    };
 	    $.ajax({
 		url: 'add_new_db',
@@ -119,8 +119,36 @@
 
 <body>
   Table ID: <input id="dbid"/><br/>
-  Table name <input id="dbname"/><br/>
-  Path: <input id="dbpath" type="text" value="~/vskb/"/><br/>
+  Table name: <input id="dbname"/><br/>
+  <br/>
+
+  <script>
+    $(function(){
+	
+	$(".spoiler-button").click(function(){
+	    $(".spoiler").toggle("fast");
+	});
+    });
+  </script>
+  <a href="#" class="spoiler-button" style="text-decoration: none;">Info...</a>
+  <div class="spoiler" style="display:none; overflow-y:hidden; border:1px dashed #ccc; background:whitesmoke;">
+    Column ID - индентификатор столбца. Допустимы только латинские прописные буквы и цифры. <br/>
+    Column Name - имя столбца. По вашему желанию. Будет отображатся при просмотре таблицы и записей.<br/>
+    Column Type - тип столбца. Типы:
+    <ul>
+      <li>String - просто строка текста</li>
+      <li>Text field - текстовое поле. Доступно форматирование текста, строки и т.д.</li>
+      <li>Tags - строка тэгов. Доступен динамичный словарь тэгов, автодополнение и пр.</li>
+      <li>Rating - рэйтинг.  Слайдер от 1 до 10</li>
+      <li>Number - поле ввода чисел</li>
+      <li>Checkbox - галочка. Два состояния: включена, выключена</li>
+      <li>Select box - поле выбора варианта. В аргументах варианты выбора, разделённые точкой с запятой ";".</li>
+      <li>Show on preview - если активировано, то столбец будет отображатся в общей таблице при просмотре, иначе - нет.</li>
+
+    </ul>
+    <br/>
+    Column type arg - аргументы к типу столбца(если только необходимы).
+  </div>
   <br/>
   <br/>
   Database columns:
@@ -132,7 +160,7 @@
 	<th>Column type</th>
 	<th>Column type arg(only if required)</th>
         <th>Show on preview?</th>
-		<th>Select</th>
+	<th>Select</th>
       </tr>
     </thead>
   </table>
