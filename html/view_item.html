@@ -8,37 +8,35 @@
 
   
   <script type="text/javascript">
-	function get_info(id)
-	{
-		$.getJSON('get_item_data?id='+id, {}, function(json){
+    function get_info(id)
+    {
+	$.getJSON('get_item_data?id='+id, {}, function(json){
 		%for i in range(len(clms)):
-			$('#${clms[i]}').html(json.d[${i + 1}]);
+	    $('#${clms[i]}').html(json.d[${i + 1}]);
 		%endfor
-		});
-	}
-	$(document).ready(function()
-					  {
-						  get_info(${id});
-					  });
-	</script>
-	
+	});
+    }
+    $(document).ready(function()
+		      {
+			  get_info(${id});
+		      });
+  </script>
+  
 </head>
 
 <body>
   ID: ${id}
   <br/><br/>
   <form id="form_id" class="pure-form-aligned">
-	<fieldset>
-	  %for i in clms:
-	  <div class="pure-control-group">
-		<label for="${i}">${cln[i]}</label> 
-		<label name="${i}" id="${i}"/><br/>
-
-	  </div>
-	  %endfor
-	</fieldset>
+    <fieldset>
+      %for i in clms:
+      <div class="pure-control-group">
+	<label for="${i}">${cln[i]}</label> 
+	<label name="${i}" id="${i}"/><br/>
+	
+      </div>
+      %endfor
+    </fieldset>
   </form>
-    
-  
 </body>
 </html>

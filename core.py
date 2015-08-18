@@ -25,7 +25,7 @@ class Core(object):
         if os.path.exists(self.configPath):
             with open(self.configPath, "r") as fl:
                 dt = json.load(fl)
-#                self.defaultDBpath = dt["defaultpath"]
+                self.defaultDBpath = dt["defaultpath"]
                 for i in dt["dbs"]:
                     v = db.DB(i)
                     self._add_db(v)

@@ -121,7 +121,7 @@ class MainPage(object):
         s = "<a href='add'>Add new</a><br/><br/><br/>"
         for i in self.core.dbs:
             s += "<a href='" + i.DBID  + "'>" + i.DBName + "</a><br/>"
-        return s
+        return Template(filename=os.path.join(os.getcwd(), "html/index.html")).render()
 
     @cherrypy.tools.json_in()
     def add_new_db(self):
@@ -129,7 +129,19 @@ class MainPage(object):
         self.core.create_db(i)
         return ""
 
+    @cherrypy.tools.json_out()
+    def get_all_dbs(self):
+        d = []
+        for i in self.core.dbs:
+            d.append({"id": i.DBID,
+                      "name": i.DBName,
+                      "cids": i.columns,
+                      "cnames": i.columnNames,
+                      "count": i.count()
+                  })
+        return d
 
+    get_all_dbs.exposed = True
     index.exposed = True
     add_new_db.exposed = True    
 
