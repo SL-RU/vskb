@@ -118,10 +118,10 @@ class MainPage(object):
     core = None
     
     def index(self):
-        s = "<a href='add'>Add new</a><br/><br/><br/>"
-        for i in self.core.dbs:
-            s += "<a href='" + i.DBID  + "'>" + i.DBName + "</a><br/>"
-        return Template(filename=os.path.join(os.getcwd(), "html/index.html")).render()
+        #s = "<a href='add'>Add new</a><br/><br/><br/>"
+        #for i in self.core.dbs:
+        #    s += "<a href='" + i.DBID  + "'>" + i.DBName + "</a><br/>"
+        return Template(filename=os.path.join(os.getcwd(), "html/index.html"), input_encoding='utf-8').render()
 
     @cherrypy.tools.json_in()
     def add_new_db(self):

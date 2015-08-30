@@ -32,14 +32,14 @@
 			  
 			  
 			  
-			  $( "#dialog" ).dialog(
-			      {
-				  autoOpen: false,
-				  width: $(document).width() - 20,
-				  height: $(document).height() - 20,
-				  fullScreen: true,
-				  fullScreenForce: true
-			      });
+			  //$( "#dialog" ).dialog(
+			  //    {
+			//	  autoOpen: false,
+			//	  width: $(document).width() - 20,
+			//	  height: $(document).height() - 20,
+			//	  fullScreen: true,
+			//	  fullScreenForce: true
+			  //    });
 			  
 			  $("#new_item").click(function(){
 			      openPopup("add");
@@ -51,6 +51,7 @@
 					);
 			  $('#table').on('click', '.edit-b', function () {
 			      var data = t.row($(this).parents('tr')).data();
+
 			      openPopup("edit?id=" + data[0]);
 			  }
 					);
@@ -74,16 +75,21 @@
   </script>
   <script>
     function openPopup(site) {
-	$( "#dialog" ).dialog("open");
-	$("#dialog iframe").attr("src", site);
+	//$( "" ).dialog("open");
+	$("#iframe").attr("src", site);
     }
   </script>  
 </head>
 
 <body>
-  <div id="DBName">Headddd</div>
-  <button id="new_item">New</button><br/>
-  <button id="update">Update</button>
+  <table width="100%">
+    <tr>
+      <td><div id="DBName">Headddd</div></td>
+      <td><button id="new_item">New</button></td>
+      <td><button id="update">Update</button></td>
+      <td><a href="../../"><p align="right">vskb</p></a></td>
+    </tr>
+  </table>
   <table id="table" class="display" width="100%" cellspacing="0">
     <thead>
       <tr>
@@ -97,9 +103,9 @@
   </table>
   
 
-  <div id="dialog" title="Basic dialog">
-    <iframe width="100%" height="100%" cellspacing="0"/>
-  </div>
+
+  <iframe id="iframe" width="100%" height="400" cellspacing="0"/>
+
 
 </body>
 </html>

@@ -9,8 +9,21 @@
   
   <script type="text/javascript">
     $(document).ready(function()
-			  {
+		      {
+			  $.getJSON('get_all_dbs', {}, function(json){
+			      json.forEach(function(val, i){
+				  var s = "<a href='" + val["id"] +"/all'>Имя:" + val["name"].toString() + "<br/>" +
+				      "ID:" + val["id"] + "<br/>" +
+				      "Столбцы:" + val["сnames"] + "<br/>" +
+				      "Количество:" + val["count"] + "<br/><br/><br/></a>";
+				  $("#cont").append($('<tr>')
+						    .append($('<td>')
+							    .append(s)
+							   )
+						   );
+			      });
 			  });
+		      });
   </script>
 	
 </head>
@@ -21,7 +34,10 @@
       <td><p align="right">vskb</p></td>
     </tr>
   </table>
-
+  <table id="cont" width="100%">
+    
+  </table>
+      
   <div>
     
   </div>

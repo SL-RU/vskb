@@ -7,6 +7,8 @@ def GetSQLTypeFromColumnType(type):
         return "TEXT"
     elif type in ["rate", "int", "check"]:
         return "INTEGER"
+    elif type in ["image"]:
+        return "BLOB"
     else:
         return "TEXT"
         
